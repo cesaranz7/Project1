@@ -30,5 +30,3 @@ THEN I am presented with a image/images of the breed and its info.
 
 
 
-
-
