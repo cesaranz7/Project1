@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-    
+
     <script src="https://kit.fontawesome.com/9799a4406e.js" crossorigin="anonymous"></script>
-    <script src="dogfinder.js"></script>
+
     <title>Search</title>
 
     <script src="https://kit.fontawesome.com/96f910bad6.js" crossorigin="anonymous"></script>
@@ -93,31 +93,57 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+    <script src="dogfinder.js"></script>
     <script>
+
+
+
+
         $("#search-button").on("click", function (event) {
-            var petfinder = require("@petfinder/petfinder-js");
-            var client = new petfinder.Client({ apiKey: "ZTAQzln548t8qRq80Z160v8wNgpWjl46bHl8G9VjgTdIvH5xow", secret: "fgAYwBjnLLiU6styJzuWEIQA4z8qLIqdxjmIN8an" });
-
-            client.animal.search()
-                .then(function (response) {
-
-                    // Saving the image_original_url property
-                    var imageUrl = response.data.image_original_url;// Do something with `response.data.animals`
-
-                    // Creating and storing an image tag
-                    var dogImage = $("<p>");
-
-                    // Setting the dogImage src attribute to imageUrl
-                    dogImage.attr("src", imageUrl);
-                    dogImage.attr("alt", "dog image");
-
-                    // Prepending the catImage to the images div
-                    $("#images").prepend(dogImage);
+            // var petfinder = require("@petfinder/petfinder-js");
+            // var client = new petfinder.Client({ apiKey: "ZTAQzln548t8qRq80Z160v8wNgpWjl46bHl8G9VjgTdIvH5xow", secret: "fgAYwBjnLLiU6styJzuWEIQA4z8qLIqdxjmIN8an" });
+            $.ajax({
+                url: "https://api.petfinder.com/v2/oauth2/token",
+                method: "POST",
+                data: {
+                    grant_type: "client_credentials",
+                    client_id: "ZTAQzln548t8qRq80Z160v8wNgpWjl46bHl8G9VjgTdIvH5xow",
+                    client_secret: "fgAYwBjnLLiU6styJzuWEIQA4z8qLIqdxjmIN8an"
+                }
+            }).then(function (data) {
+                var queryURL = "https://api.petfinder.com/v2/animals?type=dog&page=2"
+                $.ajax({
+                    url: queryURL,
+                    method: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + data.access_token);
+                    },
                 })
-                .catch(function (error) {
-                    // Handle the error
-                });
+
+
+                    .then(function (response) {
+                        console.log(response);
+                        // Saving the image_original_url property
+                        var imageUrl = response.data.image_original_url;// Do something with `response.data.animals`
+
+                        // Creating and storing an image tag
+                        var dogImage = $("<p>");
+
+                        // Setting the dogImage src attribute to imageUrl
+                        dogImage.attr("src", imageUrl);
+                        dogImage.attr("alt", "dog image");
+
+                        // Prepending the dogImage to the images div
+                        $("#images").prepend(dogImage);
+                    })
+
+            })
+
+
+
+
+
+
 
 
 
